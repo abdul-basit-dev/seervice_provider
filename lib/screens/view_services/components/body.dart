@@ -16,7 +16,7 @@ class _BodyState extends State<Body> {
     return const TabBarView(
       children: <Widget>[
         ApprovedServices(),
-        PendingServices(),
+        // PendingServices(),
       ],
     );
   }

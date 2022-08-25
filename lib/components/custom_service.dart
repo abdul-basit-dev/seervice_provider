@@ -25,10 +25,10 @@ class CustomService extends StatelessWidget {
               borderRadius: BorderRadius.circular(30),
               color: kTextColorSecondary.withOpacity(0.2),
             ),
-            child: Image(
-              width: 48,
-              height: 48,
-              image: AssetImage(icon),
+            child: CircleAvatar(
+              radius: 30.0,
+              backgroundImage: NetworkImage(icon),
+              backgroundColor: Colors.transparent,
             ),
           ),
           Padding(

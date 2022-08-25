@@ -1,23 +1,56 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:handyprovider/components/default_button.dart';
-import 'package:handyprovider/screens/location_permission/location_permission_screen.dart';
+import 'package:handyprovider/helper/global_config.dart';
+
 import 'package:image_picker/image_picker.dart';
 import '../../../../constants.dart';
+import '../../../../helper/keyboard.dart';
 import '../../../../size_config.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+
+import '../../../sign_in/sign_in_screen.dart';
+
+import 'dart:async';
+import 'dart:io';
+import 'dart:async';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:async';
 
 class TrackingForm extends StatefulWidget {
-  const TrackingForm({Key? key}) : super(key: key);
-
+  const TrackingForm({
+    Key? key,
+    required this.name,
+    required this.email,
+    required this.gender,
+    required this.mobile,
+    required this.cnic,
+    required this.password,
+    required this.profileImg,
+  }) : super(key: key);
+  final String name, email, password, cnic, mobile, gender;
+  final File? profileImg;
   @override
   State<TrackingForm> createState() => _TrackingFormState();
 }
 
 class _TrackingFormState extends State<TrackingForm> {
+  String webUrl = baseUrl + "provider_add_license_img.php";
+  bool? error, sending, success;
+  String? msg;
+  ////////////
   bool agree = false;
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
+
+  String? fileName;
+
+  String imageUrl = 'Empty';
+
   static const snackBar = SnackBar(
     content: Text('Provide Required Informaition!'),
   );
@@ -35,8 +68,43 @@ class _TrackingFormState extends State<TrackingForm> {
     var pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       _selectedImage = File(pickedFile!.path);
+      fileName = _selectedImage!.path.split('/').last;
+      print(fileName);
+      uploadImageToFirebase(_selectedImage!, fileName!);
     });
     // if (mounted) Navigator.of(context).pop();
+  }
+
+  final Reference _storageReference =
+      FirebaseStorage.instance.ref().child("contact_images");
+
+  void uploadImageToFirebase(File file, String fileName) async {
+    // Create the file metadata
+    //final metadata = SettableMetadata(contentType: "image/jpeg");
+
+    file.absolute.existsSync();
+    //upload
+    _storageReference.child(fileName).putFile(file).then((firebaseFile) async {
+      var downloadUrl = await firebaseFile.ref.getDownloadURL();
+
+      setState(() {
+        imageUrl = downloadUrl;
+        print("downloadUrl");
+        print(downloadUrl);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    error = false;
+    sending = false;
+    success = false;
+    msg = "";
+    super.initState();
+
+    print("uid");
+    print(box!.get('uid'));
   }
 
   @override
@@ -78,15 +146,15 @@ class _TrackingFormState extends State<TrackingForm> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18.0),
-                    child: _selectedImage == null
+                    child: imageUrl == 'Empty'
                         ? Image.asset(
                             "assets/images/cleaner_2.png",
                             fit: BoxFit.fill,
                             width: 150,
                             height: 150,
                           )
-                        : Image.file(
-                            _selectedImage!,
+                        : Image.network(
+                            imageUrl,
                             fit: BoxFit.cover,
                             width: 150,
                             height: 150,
@@ -150,17 +218,113 @@ class _TrackingFormState extends State<TrackingForm> {
               ],
             ),
             DefaultButton(
+              text: sending! ? "Please wait..." : "Sign Up",
               press: () {
-                if (agree == true && _selectedImage != null) {
-                  Navigator.pushNamed(
-                      context, LocationPermissionScreen.routeName);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }
+                signUp();
               },
-              text: "Create Account",
-            )
+            ),
           ]),
     );
+  }
+
+//Notification to Admin
+  void sendPushMessage(String body, String title, String token) async {
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization':
+              'key=AAAAK_aG2S4:APA91bEdT80xbI915lAdt7rMycCZW3ayWnnwDByQ25jp1Xiy-SLaq4pLm4RCy8qTl91ba6QFvQ6G5n8F4VdVys-TD2cljZoObB4pWTZieR4OafWcvmBd28c2FU7oLWAOnaliPUhieuP9',
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'body': body,
+              'title': title,
+            },
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'id': '1',
+              'status': 'done'
+            },
+            "to": token,
+          },
+        ),
+      );
+      print('done');
+    } catch (e) {
+      print("error push notification");
+    }
+  }
+
+  ///end
+  signUp() async {
+    if (agree == true && _selectedImage != null && imageUrl != 'Empty') {
+      setState(() {
+        sending = true;
+      });
+      KeyboardUtil.hideKeyboard(context);
+
+      sendData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future<void> sendData() async {
+    var request = http.MultipartRequest('POST', Uri.parse(webUrl));
+    request.fields['id'] = box!.get('uid');
+    request.fields['image'] = imageUrl;
+    // var pic = await http.MultipartFile.fromPath("image", _selectedImage!.path);
+
+    // request.files.add(pic);
+
+    var response = await request.send();
+    print(response.statusCode);
+    var responsed = await http.Response.fromStream(response);
+    print(request);
+
+    if (response.statusCode == 200) {
+      print('full response:');
+      print(responsed.body); //print raw response on console
+      var data = json.decode(responsed.body); //decoding json to array
+      if (data["success"] == 0) {
+        setState(() {
+          //refresh the UI when error is recieved from server
+          print('error is recieved from server');
+          sending = false;
+          error = true;
+          msg = data["msg"];
+          print(msg); //error message from server
+        });
+      } else {
+        //after write success, make fields empty
+
+        setState(() {
+          print('Sending Notification');
+          sendPushMessage(
+              "New Provider Register", "Click to See Details", adminToken);
+          msg = data["msg"];
+          print(msg);
+          msg = "success sendign data...";
+          print(msg);
+          sending = false;
+          success = true; //mark success and refresh UI with setState
+          Navigator.pushNamed(context, SignInScreen.routeName);
+        });
+      }
+    } else {
+      //there is error
+      setState(() {
+        error = true;
+        msg = "Error during sendign data.";
+        print(msg);
+        print(responsed.body);
+        sending = false;
+        //mark error and refresh UI with setState
+      });
+    }
   }
 }

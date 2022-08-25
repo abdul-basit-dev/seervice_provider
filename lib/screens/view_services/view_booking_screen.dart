@@ -12,7 +12,7 @@ class ViewServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 1,
       child: Scaffold(
         appBar: AppBar(
           elevation: 2,
@@ -26,8 +26,8 @@ class ViewServicesScreen extends StatelessWidget {
               unselectedLabelColor: kTextColorSecondary,
               indicatorColor: kPrimaryColor,
               tabs: [
-                Tab(text: 'Approved'),
-                Tab(text: 'Pending'),
+                Tab(text: 'My Services'),
+                // Tab(text: 'Pending'),
               ]),
         ),
         body: const Body(),

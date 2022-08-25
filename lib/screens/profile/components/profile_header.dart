@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:handyprovider/constants.dart';
 import 'package:handyprovider/screens/profile/components/edit_profile/edit_profile_screen.dart';
 
+import '../../../helper/global_config.dart';
+
 class ProfileHeader extends StatefulWidget {
   const ProfileHeader({Key? key}) : super(key: key);
 
@@ -11,7 +13,14 @@ class ProfileHeader extends StatefulWidget {
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
-  bool verified = false;
+  String? profileFrmHive;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    profileFrmHive = box!.get('profile_img');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,22 +28,21 @@ class _ProfileHeaderState extends State<ProfileHeader> {
       child: Center(
         child: Column(
           children: <Widget>[
-            const CircleAvatar(
+            CircleAvatar(
               radius: 50.0,
               backgroundColor: Colors.white,
               child: CircleAvatar(
                 backgroundColor: Colors.white,
                 radius: 48.0,
-                backgroundImage: AssetImage("assets/images/user.png"),
-                // backgroundImage: NetworkImage(data[index]['avatar_url']),
+                backgroundImage: NetworkImage(profileFrmHive!),
               ),
             ),
             RichText(
               text: TextSpan(
                 children: [
-                  const TextSpan(
-                    text: "Abdul Basit",
-                    style: TextStyle(
+                  TextSpan(
+                    text: box!.get('name'),
+                    style: const TextStyle(
                         fontSize: 14.0,
                         color: kTextColor,
                         fontWeight: FontWeight.w500),
@@ -43,14 +51,16 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     child: Icon(
                       Icons.verified,
                       size: 20,
-                      color: verified ? kPrimaryColor : kTextColorSecondary,
+                      color: box!.get('status') == 'pending'
+                          ? kTextColorSecondary
+                          : kPrimaryColor,
                     ),
                   ),
                 ],
               ),
             ),
             Text(
-              "abc123@gmail.com",
+              box!.get('email'),
               style: secondaryTextStyle12,
             ),
             Padding(

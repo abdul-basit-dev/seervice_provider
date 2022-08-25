@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../components/custom_logout_dialog.dart';
 import '../../../constants.dart';
+import '../../../helper/global_config.dart';
 import '../../map_location/map_location_screen.dart';
+import '../../sign_in/sign_in_screen.dart';
 
 class ProfilePreferences extends StatefulWidget {
   const ProfilePreferences({Key? key}) : super(key: key);
@@ -62,7 +64,24 @@ class _ProfilePreferencesState extends State<ProfilePreferences> {
 
                     return CustomLogoutDialog(
                       press: () {
-                        Navigator.of(context).pop();
+                        showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              // Navigator.of(context).pop();
+
+                              return CustomLogoutDialog(
+                                press: () {
+                                  box!.delete("login");
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      SignInScreen.routeName, (route) => false);
+                                  //  Navigator.of(context).pop();
+                                },
+                                close: () {
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            });
                       },
                       close: () {
                         Navigator.of(context).pop();

@@ -6,6 +6,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter/cupertino.dart';
 
+import '../../../helper/global_config.dart';
+
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
 
@@ -123,6 +125,7 @@ class _BodyState extends State<Body> {
   Future _checkForPermissions() async {
     final PermissionStatus permissionStatus = await _getPermission();
     if (permissionStatus == PermissionStatus.granted) {
+      box!.put('permissions', 'true');
       Navigator.pushNamed(context, MapScreen.routeName);
     } else if (permissionStatus == PermissionStatus.denied) {
       //If permissions have been denied show standard cupertino alert dialog

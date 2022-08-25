@@ -1,16 +1,161 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/components/default_button.dart';
+import 'package:handyprovider/helper/global_config.dart';
 import 'package:handyprovider/size_config.dart';
+import 'package:hive/hive.dart';
 
 import '../../components/secondry_btn.dart';
 import '../../constants.dart';
 import '../home_screen/homescreen.dart';
 import 'components/body.dart';
+import 'dart:async';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class OffersDetails extends StatelessWidget {
-  const OffersDetails({Key? key}) : super(key: key);
+import 'package:http/http.dart' as http;
 
+class OffersDetails extends StatefulWidget {
+  const OffersDetails({
+    Key? key,
+    required this.uid,
+    required this.id,
+    required this.serviceName,
+    required this.b_date,
+    required this.b_time,
+    required this.b_hours,
+    required this.b_price,
+    required this.booking_status,
+  }) : super(key: key);
+  final String uid,
+      id,
+      serviceName,
+      b_date,
+      b_time,
+      b_hours,
+      b_price,
+      booking_status;
   static String routeName = "/offer_detail";
+
+  @override
+  State<OffersDetails> createState() => _OffersDetailsState();
+}
+
+class _OffersDetailsState extends State<OffersDetails> {
+  final String url = baseUrl + "provider_manage_offers.php";
+
+  Future rejectService() async {
+    var response = await http.post(Uri.parse(url), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "id": widget.id,
+      "booking_status": 'reject',
+    });
+    //print(response.body);
+    setState(() {
+      print(response.body);
+      Navigator.of(context).pop();
+    });
+
+    // throw Exception('Failed to load data');
+  }
+
+  Future approveService() async {
+    var response = await http.post(Uri.parse(url), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "id": widget.id,
+      "booking_status": 'approve',
+    });
+    //print(response.body);
+    setState(() {
+      print(response.body);
+      Navigator.of(context).pop();
+    });
+
+    // throw Exception('Failed to load data');
+  }
+
+  //get user TOKEN
+  bool? error, sending, success;
+  String? msg;
+  final String webUrl = baseUrl + "provider_get_user_details.php";
+  Future<void> sendData() async {
+    var res = await http.post(Uri.parse(webUrl), body: {
+      "u_id": widget.uid,
+    }); //sending post request with header data
+
+    if (res.statusCode == 200) {
+      print('response:');
+      // print(res.body); //print raw response on console
+
+      var data = json.decode(res.body);
+      print('data:');
+      print(data); //decoding json to array
+      if (data["success"] == 0) {
+        setState(() {
+          //refresh the UI when error is recieved from server
+
+          sending = false;
+          error = true;
+          msg = data["msg"]; //error message from server
+          final snackBar = SnackBar(
+            content: Text(data["msg"]),
+          );
+          //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+      } else {
+        //after write success, make fields empty
+
+        setState(() {
+          msg = "success sendign data.";
+          print(msg);
+
+          sending = false;
+          success = true;
+          print(data["success"]);
+
+          // add data to hive
+
+          if (data["success"] == 1) {
+            print("All done");
+            print(data["id"]);
+            print('user--token:\n');
+            print(data['token']);
+            box!.put('userToken', data['token']);
+          } else {
+            final snackBar = SnackBar(
+              content: Text(data["success"] == 0 ? data["msg"] : data["msg"]),
+            );
+            //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            print(data["msg"]);
+          }
+        });
+      }
+    } else {
+      //there is error
+      setState(() {
+        error = true;
+        msg = "Error during sendign data.";
+        print(msg);
+        print(res.body);
+        sending = false;
+        //mark error and refresh UI with setState
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // getUserData();
+    error = false;
+    sending = false;
+    success = false;
+    msg = "";
+    sendData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,34 +164,57 @@ class OffersDetails extends StatelessWidget {
           elevation: 2,
           centerTitle: false,
           title: const Text(
-            "Offer Details",
+            'Details',
+            //widget.booking_status == 'approve' ? "In Progress" : 'Active',
             style: TextStyle(color: kTextColor),
           ),
         ),
-        body: const Body(),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: SecondaryButton(
-                  press: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        (context), HomeScreen.routeName, (route) => false);
-                  },
-                  text: "Cancel",
+        body: Body(
+          uid: widget.uid,
+          serviceName: widget.serviceName,
+          b_date: widget.b_date,
+          b_time: widget.b_time,
+          b_hours: widget.b_hours,
+          b_price: widget.b_price,
+        ),
+        bottomNavigationBar: Visibility(
+          visible: widget.booking_status != 'pending' ? false : true,
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: SecondaryButton(
+                    press: () {
+                      print("id:");
+                      print(widget.id);
+                      rejectService();
+                      sendPushMessage(
+                          'Booking Rejected',
+                          'Your booking has been rejected',
+                          box!.get('userToken'));
+                      // Navigator.pushNamedAndRemoveUntil(
+                      //     (context), HomeScreen.routeName, (route) => false);
+                    },
+                    text: "Cancel",
+                  ),
                 ),
-              ),
-              SizedBox(width: getProportionateScreenWidth(8)),
-              Expanded(
-                child: DefaultButton(
-                  press: () {
-                    showConfirmationScreen(context);
-                  },
-                  text: "Accept",
+                SizedBox(width: getProportionateScreenWidth(8)),
+                Expanded(
+                  child: DefaultButton(
+                    press: () {
+                      approveService();
+                      //showConfirmationScreen(context);
+                      sendPushMessage(
+                          'Booking Accepted',
+                          'Your booking has been accepted',
+                          box!.get('userToken'));
+                    },
+                    text: "Accept",
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ));
   }

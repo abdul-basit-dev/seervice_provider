@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:handyprovider/helper/keyboard.dart';
+import 'package:handyprovider/screens/admin/admin_dashboard/admin_dashboard.dart';
 import 'package:handyprovider/screens/forgot_password/forgot_password_screen.dart';
 import 'package:handyprovider/screens/location_permission/location_permission_screen.dart';
 import '../../../components/default_button.dart';
@@ -10,6 +11,9 @@ import '../../../helper/global_config.dart';
 import '../../../size_config.dart';
 import '../../admin/manage_services/manage_services_screen.dart';
 import '../../home_screen/homescreen.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 
 class SignForm extends StatefulWidget {
   const SignForm({Key? key}) : super(key: key);
@@ -37,9 +41,18 @@ class _SignFormState extends State<SignForm> {
     });
   }
 
+  bool? error, sending, success;
+  String? msg;
+
+  String webUrl = baseUrl + "/providerlogin.php";
+
   @override
   void initState() {
     super.initState();
+    error = false;
+    sending = false;
+    success = false;
+    msg = "";
     if (box!.containsKey("login")) {
       Future.delayed(Duration.zero, () {
         Navigator.of(context)
@@ -47,6 +60,11 @@ class _SignFormState extends State<SignForm> {
       });
 
       isLogin = true;
+    } else if (box!.containsKey("admin_login")) {
+      Future.delayed(Duration.zero, () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            AdminDashBoard.routeName, (route) => false);
+      });
     }
   }
 
@@ -76,17 +94,18 @@ class _SignFormState extends State<SignForm> {
                 style: TextStyle(fontSize: 12, color: kTextColorSecondary),
               ),
               Spacer(),
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
-                child: const Text(
-                  "Forgot Password",
-                  style: TextStyle(
-                      decoration: TextDecoration.none,
-                      fontSize: 12,
-                      color: kPrimaryColor),
-                ),
-              )
+              // GestureDetector(
+
+              //   onTap: () => Navigator.pushNamed(
+              //       context, ForgotPasswordScreen.routeName),
+              //   child: const Text(
+              //     "Forgot Password",
+              //     style: TextStyle(
+              //         decoration: TextDecoration.none,
+              //         fontSize: 12,
+              //         color: kPrimaryColor),
+              //   ),
+              // )
             ],
           ),
           //FormError(errors: errors),
@@ -94,24 +113,19 @@ class _SignFormState extends State<SignForm> {
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 12),
             child: DefaultButton(
-              text: "Sign In",
+              text: sending! ? "Please wait..." : "Sign In",
               press: () {
                 if (_formKey.currentState!.validate() &&
                     emailController.text == "admin@gmail.com" &&
-                    passwordController.text == "admin") {
+                    passwordController.text == "admin12345") {
                   print(emailController.text);
                   print(passwordController.text);
                   _formKey.currentState!.save();
                   box!.put("admin_login", true);
                   KeyboardUtil.hideKeyboard(context);
-                  Navigator.pushNamed(context, AdminManageScreen.routeName);
-                } else if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  // if all are valid then go to success screen
-                  box!.put("login", true);
-                  KeyboardUtil.hideKeyboard(context);
-                  Navigator.pushNamed(
-                      context, LocationPermissionScreen.routeName);
+                  Navigator.pushNamed(context, AdminDashBoard.routeName);
+                } else {
+                  signIn();
                 }
               },
             ),
@@ -119,6 +133,114 @@ class _SignFormState extends State<SignForm> {
         ],
       ),
     );
+  }
+
+//Functions
+
+  signIn() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        sending = true;
+      });
+      KeyboardUtil.hideKeyboard(context);
+
+      sendData();
+    }
+  }
+
+  Future<void> sendData() async {
+    var res = await http.post(Uri.parse(webUrl), body: {
+      "email": emailController.text,
+      "password": passwordController.text,
+    }); //sending post request with header data
+
+    if (res.statusCode == 200) {
+      print('response:');
+      print(res.body); //print raw response on console
+
+      var data = json.decode(res.body);
+      print('data:');
+      print(data); //decoding json to array
+      if (data["success"] == 0) {
+        setState(() {
+          //refresh the UI when error is recieved from server
+          sending = false;
+          error = true;
+          msg = data["msg"]; //error message from server
+          final snackBar = SnackBar(
+            content: Text(data["msg"]),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        });
+      } else {
+        emailController.text = "";
+        passwordController.text = "";
+        //after write success, make fields empty
+
+        setState(() {
+          msg = "success sendign data.";
+          print(msg);
+
+          sending = false;
+          success = true;
+          print(data["success"]);
+
+          // add data to hive
+
+          if (data["success"] == 1) {
+            print("All done");
+            print(data["id"]);
+            print(data["p_token"]);
+            box!.put("login", "true");
+            box!.put("id", data["id"]);
+            box!.put("name", data["name"]);
+            box!.put("email", data["email"]);
+            box!.put("password", data["password"]);
+            box!.put("mobile", data["contact"]);
+            // box!.put("adress", data["adress"]);
+            box!.put("cnic", data["cnic"]);
+            box!.put("gender", data["gender"]);
+            box!.put("status", data["status"]);
+            box!.put("p_token", data["p_token"]);
+            box!.put("image", data["image"]);
+            box!.put("profile_img", data["profile_img"]);
+            //mark success and refresh UI with setState
+            if (data["email"] == 'admin@gmail.com' &&
+                data["password"] == 'admin12345') {
+              box!.put("admin_login", true);
+              KeyboardUtil.hideKeyboard(context);
+              Navigator.pushNamed(context, AdminDashBoard.routeName);
+            } else if (box!.containsKey("permissions")) {
+              Future.delayed(Duration.zero, () {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    HomeScreen.routeName, (route) => false);
+              });
+
+              isLogin = true;
+            } else {
+              Navigator.pushNamed(context, LocationPermissionScreen.routeName);
+            }
+          } else {
+            final snackBar = SnackBar(
+              content: Text(data["success"] == 0 ? data["msg"] : data["msg"]),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            print(data["msg"]);
+          }
+        });
+      }
+    } else {
+      //there is error
+      setState(() {
+        error = true;
+        msg = "Error during sendign data.";
+        print(msg);
+        print(res.body);
+        sending = false;
+        //mark error and refresh UI with setState
+      });
+    }
   }
 
   TextFormField buildPasswordFormField() {

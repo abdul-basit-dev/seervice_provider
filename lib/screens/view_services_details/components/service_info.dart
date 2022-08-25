@@ -5,8 +5,31 @@ import '../../../helper/global_config.dart';
 import '../../../size_config.dart';
 
 class ServiceInfo extends StatefulWidget {
-  const ServiceInfo({Key? key}) : super(key: key);
-
+  const ServiceInfo({
+    Key? key,
+    required this.id,
+    required this.title,
+    required this.speciality,
+    required this.description,
+    required this.note,
+    required this.adress,
+    required this.rate,
+    required this.status,
+    required this.spName,
+    required this.spId,
+    required this.serviceImages,
+  }) : super(key: key);
+  final String title,
+      id,
+      speciality,
+      description,
+      note,
+      adress,
+      rate,
+      status,
+      spName,
+      spId,
+      serviceImages;
   @override
   State<ServiceInfo> createState() => _ServiceInfoState();
 }
@@ -40,16 +63,16 @@ class _ServiceInfoState extends State<ServiceInfo> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              const Text(
-                "House Cleaning",
-                style: TextStyle(
+              Text(
+                widget.title,
+                style: const TextStyle(
                   color: kTextColor,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Visibility(
-                visible: isAdmin == true ? false : true,
+                visible: false,
                 child: IconButton(
                   icon: Icon(
                     _favourite
@@ -73,12 +96,12 @@ class _ServiceInfoState extends State<ServiceInfo> {
             // mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Text(
-                "Jenny Wilson",
-                style: TextStyle(
+              Text(
+                widget.spName,
+                style: const TextStyle(
                   color: kPrimaryLightColor,
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               const SizedBox(
@@ -130,17 +153,19 @@ class _ServiceInfoState extends State<ServiceInfo> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
-                width: 72,
+                width: 120,
                 height: 32,
                 decoration: BoxDecoration(
                   color: kPrimaryLightColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "Cleaning",
-                    style: TextStyle(
-                      fontSize: 14,
+                    widget.speciality,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
                       color: kPrimaryColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -152,16 +177,16 @@ class _ServiceInfoState extends State<ServiceInfo> {
               ),
               Expanded(
                 child: RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
-                      WidgetSpan(
+                      const WidgetSpan(
                         child: Icon(
                           Icons.location_on,
                           size: 24,
                           color: kPrimaryColor,
                         ),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: " ",
                         style: TextStyle(
                           fontSize: 12.0,
@@ -169,9 +194,8 @@ class _ServiceInfoState extends State<ServiceInfo> {
                         ),
                       ),
                       TextSpan(
-                        text:
-                            "Street 15, House 15 A, Bahria Phase 8, Rawalpindi",
-                        style: TextStyle(
+                        text: widget.adress,
+                        style: const TextStyle(
                           fontSize: 12.0,
                           color: kTextColorSecondary,
                         ),
@@ -190,18 +214,33 @@ class _ServiceInfoState extends State<ServiceInfo> {
             children: <Widget>[
               Expanded(
                 child: RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
-                      TextSpan(
-                        text: "Rs: 2500 ",
+                      const TextSpan(
+                        text: " Price  ",
                         style: TextStyle(
+                          fontSize: 12.0,
+                          color: kTextColorSecondary,
+                        ),
+                      ),
+                      TextSpan(
+                        text: widget.rate,
+                        style: const TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           color: kPrimaryColor,
                         ),
                       ),
-                      TextSpan(
-                        text: " ( Per Floor ) ",
+                      const TextSpan(
+                        text: " ( PKR ) ",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                          color: kTextColorSecondary,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: " ( Per Hour ) ",
                         style: TextStyle(
                           fontSize: 12.0,
                           color: kTextColorSecondary,

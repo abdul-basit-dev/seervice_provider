@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
-import '../../add_new_service/add_new_service_screen.dart';
+
 import '../add_services/add_services_sccreen.dart';
 import 'components/body.dart';
 
@@ -15,6 +15,12 @@ class AdminManageScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () {},
+            )
+          ],
           elevation: 2,
           centerTitle: false,
           title: const Text(

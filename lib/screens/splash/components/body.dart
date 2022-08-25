@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:handyprovider/constants.dart';
+import 'package:handyprovider/screens/admin/admin_dashboard/admin_dashboard.dart';
 import 'package:handyprovider/screens/admin/manage_services/manage_services_screen.dart';
 import 'package:handyprovider/screens/sign_in/sign_in_screen.dart';
 import 'package:handyprovider/screens/sign_up/sign_up_screen.dart';
@@ -29,7 +30,7 @@ class _BodyState extends State<Body> {
     if (box!.containsKey("admin_login")) {
       Future.delayed(Duration.zero, () {
         Navigator.of(context).pushNamedAndRemoveUntil(
-            AdminManageScreen.routeName, (route) => false);
+            AdminDashBoard.routeName, (route) => false);
       });
     } else if (box!.containsKey("login")) {
       Future.delayed(Duration.zero, () {

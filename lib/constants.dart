@@ -28,6 +28,11 @@ final headingStyleWhite = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.white,
 );
+final subheadingStyleWhite = TextStyle(
+  fontSize: getProportionateScreenWidth(14),
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
 final secondaryTextStyle12 = TextStyle(
   fontSize: getProportionateScreenWidth(12),
   color: kTextColorSecondary,

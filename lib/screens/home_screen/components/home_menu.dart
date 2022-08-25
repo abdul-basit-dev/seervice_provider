@@ -3,6 +3,7 @@ import 'package:handyprovider/constants.dart';
 import 'package:handyprovider/screens/add_new_service/add_new_service_screen.dart';
 import 'package:handyprovider/screens/view_offers/view_offers_screen.dart';
 
+import '../../../helper/global_config.dart';
 import '../../view_services/view_booking_screen.dart';
 
 class HomeMenu extends StatefulWidget {
@@ -19,6 +20,13 @@ class _HomeMenuState extends State<HomeMenu> {
     {"text": "New Offers"},
     {"text": "Profile "},
   ];
+  static const snackBar = SnackBar(
+    content: Text('Profile Not Verified Yet'),
+  );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,8 +46,11 @@ class _HomeMenuState extends State<HomeMenu> {
                   ),
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(
-                          context, AddNewServiceScreen.routeName);
+                      box!.get('status') != 'pending'
+                          ? Navigator.pushNamed(
+                              context, AddNewServiceScreen.routeName)
+                          : ScaffoldMessenger.of(context)
+                              .showSnackBar(snackBar);
                     },
                     child: Center(
                       child: Padding(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:handyprovider/screens/add_new_service/add_new_service_screen.dart';
 
 import 'package:handyprovider/screens/home_screen/homescreen.dart';
 import 'package:handyprovider/screens/profile/profile_screen.dart';

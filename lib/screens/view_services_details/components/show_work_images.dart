@@ -10,10 +10,10 @@ class WorkImagesGridView extends StatefulWidget {
 class _WorkImagesGridViewState extends State<WorkImagesGridView> {
   final List<String> _listImages = [
     "assets/images/cleaner_2.png",
-    "assets/images/cleaner_2.png",
-    "assets/images/cleaner_2.png",
-    "assets/images/cleaner_2.png",
-    "assets/images/cleaner_2.png",
+    // "assets/images/cleaner_2.png",
+    // "assets/images/cleaner_2.png",
+    // "assets/images/cleaner_2.png",
+    // "assets/images/cleaner_2.png",
   ];
   final ScrollController _controller = ScrollController();
 
