@@ -104,7 +104,7 @@ class _ViewAllUsersState extends State<ViewAllUsers> {
                                     height: 96,
                                     fit: BoxFit.fill,
                                     image: NetworkImage(
-                                      baseUrlUser + data[index]['uimage'],
+                                      data[index]['uimage'],
                                     ),
                                   ),
                                 ),

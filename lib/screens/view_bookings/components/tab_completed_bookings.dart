@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
+import '../../../helper/global_config.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../../../helper/global_config.dart';
 import '../../offers_detail/offers_detail_screen.dart';
 
 class CompletedBookings extends StatefulWidget {
-  const CompletedBookings({Key? key}) : super(key: key);
+  const CompletedBookings({Key? key, required this.id}) : super(key: key);
+  final String id;
 
   @override
   State<CompletedBookings> createState() => _CompletedBookingsState();
@@ -17,7 +18,19 @@ class CompletedBookings extends StatefulWidget {
 
 class _CompletedBookingsState extends State<CompletedBookings> {
   final ScrollController _controller = ScrollController();
-  final String url = baseUrl + "provider_view_bookings.php";
+  // final List<String> _listImages = [
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  //   "assets/images/cleaner_2.png",
+  // ];
+
+  final String url = baseUrl + "user_view_bookings.php";
   // final String webUrl = baseUrl + "provider_get_user_details.php";
 
   late List data;
@@ -29,7 +42,7 @@ class _CompletedBookingsState extends State<CompletedBookings> {
   void initState() {
     super.initState();
     print('id:..');
-    print(box!.get('id'));
+
     getAllData();
   }
 
@@ -39,7 +52,7 @@ class _CompletedBookingsState extends State<CompletedBookings> {
     }, body: {
       "booking_status": 'approve',
       "user_booking_status": 'complete',
-      "sp_id": box!.get('id'),
+      "u_id": widget.id,
     });
     //print(response.body);
     setState(() {
@@ -86,6 +99,8 @@ class _CompletedBookingsState extends State<CompletedBookings> {
                             b_hours: data[index]['b_hours'],
                             b_price: data[index]['b_price'],
                             booking_status: data[index]['booking_status'],
+                            user_booking_status: data[index]
+                                ['user_booking_status'],
                           ),
                         )).then((value) => setState(() => {getAllData()}));
                   },
@@ -152,26 +167,6 @@ class _CompletedBookingsState extends State<CompletedBookings> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                child: const Text(
-                                  "Completed",
-                                  style: TextStyle(
-                                      fontSize: 12, color: kSecondaryColor),
-                                ),
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.amber,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),

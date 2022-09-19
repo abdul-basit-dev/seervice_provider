@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants.dart';
+import '../../../helper/global_config.dart';
 import 'service_summary.dart';
 import 'user_info_header.dart';
-import 'package:handyprovider/helper/global_config.dart';
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;

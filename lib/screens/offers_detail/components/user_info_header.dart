@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:handyprovider/constants.dart';
+
+import '../../../constants.dart';
+
 
 class UserInfoHeader extends StatefulWidget {
   const UserInfoHeader({

@@ -57,6 +57,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Handy Provider',
       theme: theme(),
       initialRoute: SplashScreen.routeName,
+      debugShowCheckedModeBanner: false,
       // home: const SplashScreen(),
       routes: routes,
     );

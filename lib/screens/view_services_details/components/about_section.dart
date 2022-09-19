@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/constants.dart';
-import 'package:handyprovider/screens/profile/profile_screen.dart';
 
 import '../../../helper/global_config.dart';
 
@@ -72,9 +71,7 @@ class _AboutSectionState extends State<AboutSection> {
                     fontWeight: FontWeight.w500),
               ),
               InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, ProfileScreen.routeName);
-                },
+                onTap: () {},
                 child: const Text(
                   "",
                   style: TextStyle(

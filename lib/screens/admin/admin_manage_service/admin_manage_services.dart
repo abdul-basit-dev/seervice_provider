@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:handyprovider/screens/admin/search_screen/search_screen.dart';
 
 import '../../../constants.dart';
 import 'components/body.dart';
 
-class AdminManageServicesScreen extends StatelessWidget {
+class AdminManageServicesScreen extends StatefulWidget {
   static String routeName = "/admin_services_manage";
-  const AdminManageServicesScreen({Key? key}) : super(key: key);
+  const AdminManageServicesScreen({
+    Key? key,
+    required this.serviceName,
+  }) : super(key: key);
+  final String serviceName;
 
+  @override
+  State<AdminManageServicesScreen> createState() =>
+      _AdminManageServicesScreenState();
+}
+
+class _AdminManageServicesScreenState extends State<AdminManageServicesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,8 +28,16 @@ class AdminManageServicesScreen extends StatelessWidget {
           "All Services",
           style: TextStyle(color: kTextColor),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, SearchScreen.routeName);
+            },
+            icon: const Icon(Icons.search_rounded),
+          )
+        ],
       ),
-      body: const Body(),
+      body: Body(serviceName: widget.serviceName),
     );
   }
 }

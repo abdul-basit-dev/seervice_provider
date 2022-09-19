@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/helper/global_config.dart';
+import 'package:handyprovider/screens/view_bookings/view_bookings_screen.dart';
 
 import '../../../../../constants.dart';
 import '../../../../../size_config.dart';
@@ -250,30 +251,41 @@ class _BodyState extends State<Body> {
                 SizedBox(height: getProportionateScreenHeight(8)),
                 Padding(
                   padding: const EdgeInsets.only(left: 8.0, right: 8),
-                  child: ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    tileColor: Colors.grey.withOpacity(0.5),
-                    title: const Text(
-                      'Bio',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: kTextColor,
-                          fontSize: 15),
-                    ),
-                    leading: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: kTextColorSecondary.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(6),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ViewAllBookingsScreen(
+                              userid: widget.id,
+                            ),
+                          ));
+                    },
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(
-                        Icons.info_outline_rounded,
-                        color: kTextColor,
+                      tileColor: Colors.grey.withOpacity(0.5),
+                      title: const Text(
+                        'History',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: kTextColor,
+                            fontSize: 15),
+                      ),
+                      leading: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: kTextColorSecondary.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(
+                          Icons.info_outline_rounded,
+                          color: kTextColor,
+                        ),
                       ),
                     ),
                   ),

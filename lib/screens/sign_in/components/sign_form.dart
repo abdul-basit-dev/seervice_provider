@@ -3,14 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/helper/keyboard.dart';
 import 'package:handyprovider/screens/admin/admin_dashboard/admin_dashboard.dart';
-import 'package:handyprovider/screens/forgot_password/forgot_password_screen.dart';
-import 'package:handyprovider/screens/location_permission/location_permission_screen.dart';
+
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
 import '../../../helper/global_config.dart';
 import '../../../size_config.dart';
-import '../../admin/manage_services/manage_services_screen.dart';
-import '../../home_screen/homescreen.dart';
+
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -53,14 +51,7 @@ class _SignFormState extends State<SignForm> {
     sending = false;
     success = false;
     msg = "";
-    if (box!.containsKey("login")) {
-      Future.delayed(Duration.zero, () {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
-      });
-
-      isLogin = true;
-    } else if (box!.containsKey("admin_login")) {
+    if (box!.containsKey("admin_login")) {
       Future.delayed(Duration.zero, () {
         Navigator.of(context).pushNamedAndRemoveUntil(
             AdminDashBoard.routeName, (route) => false);
@@ -78,36 +69,36 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(12)),
           buildPasswordFormField(),
           SizedBox(height: getProportionateScreenHeight(0)),
-          Row(
-            children: [
-              Checkbox(
-                value: remember,
-                activeColor: kPrimaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    remember = value!;
-                  });
-                },
-              ),
-              const Text(
-                "Remember me",
-                style: TextStyle(fontSize: 12, color: kTextColorSecondary),
-              ),
-              Spacer(),
-              // GestureDetector(
+          // Row(
+          //   children: [
+          //     Checkbox(
+          //       value: remember,
+          //       activeColor: kPrimaryColor,
+          //       onChanged: (value) {
+          //         setState(() {
+          //           remember = value!;
+          //         });
+          //       },
+          //     ),
+          //     const Text(
+          //       "Remember me",
+          //       style: TextStyle(fontSize: 12, color: kTextColorSecondary),
+          //     ),
+          //     Spacer(),
+          //     // GestureDetector(
 
-              //   onTap: () => Navigator.pushNamed(
-              //       context, ForgotPasswordScreen.routeName),
-              //   child: const Text(
-              //     "Forgot Password",
-              //     style: TextStyle(
-              //         decoration: TextDecoration.none,
-              //         fontSize: 12,
-              //         color: kPrimaryColor),
-              //   ),
-              // )
-            ],
-          ),
+          //     //   onTap: () => Navigator.pushNamed(
+          //     //       context, ForgotPasswordScreen.routeName),
+          //     //   child: const Text(
+          //     //     "Forgot Password",
+          //     //     style: TextStyle(
+          //     //         decoration: TextDecoration.none,
+          //     //         fontSize: 12,
+          //     //         color: kPrimaryColor),
+          //     //   ),
+          //     // )
+          //   ],
+          // ),
           //FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
           Padding(
@@ -115,18 +106,7 @@ class _SignFormState extends State<SignForm> {
             child: DefaultButton(
               text: sending! ? "Please wait..." : "Sign In",
               press: () {
-                if (_formKey.currentState!.validate() &&
-                    emailController.text == "admin@gmail.com" &&
-                    passwordController.text == "admin12345") {
-                  print(emailController.text);
-                  print(passwordController.text);
-                  _formKey.currentState!.save();
-                  box!.put("admin_login", true);
-                  KeyboardUtil.hideKeyboard(context);
-                  Navigator.pushNamed(context, AdminDashBoard.routeName);
-                } else {
-                  signIn();
-                }
+                signIn();
               },
             ),
           ),
@@ -210,16 +190,8 @@ class _SignFormState extends State<SignForm> {
                 data["password"] == 'admin12345') {
               box!.put("admin_login", true);
               KeyboardUtil.hideKeyboard(context);
-              Navigator.pushNamed(context, AdminDashBoard.routeName);
-            } else if (box!.containsKey("permissions")) {
-              Future.delayed(Duration.zero, () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    HomeScreen.routeName, (route) => false);
-              });
-
-              isLogin = true;
-            } else {
-              Navigator.pushNamed(context, LocationPermissionScreen.routeName);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  AdminDashBoard.routeName, (route) => false);
             }
           } else {
             final snackBar = SnackBar(

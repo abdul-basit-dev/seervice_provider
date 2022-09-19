@@ -39,6 +39,8 @@ class _BodyState extends State<Body> {
   String serviceSubCategories3 = 'empty';
   String serviceSubCategories4 = 'empty';
   String serviceSubCategories5 = 'empty';
+  String servicepriceMin = '0';
+  String servicepriceMax = '1000';
 
   //Camera Method
   Future openCamera() async {
@@ -148,6 +150,28 @@ class _BodyState extends State<Body> {
                     SizedBox(height: getProportionateScreenHeight(8)),
                     buildServiceSub5FormField(),
                     SizedBox(height: getProportionateScreenHeight(24)),
+                    SizedBox(height: getProportionateScreenHeight(24)),
+                    SizedBox(
+                      width: double.infinity,
+                      child: RichText(
+                        text: const TextSpan(
+                            text: 'Service Price',
+                            style: TextStyle(color: kTextColor, fontSize: 18),
+                            children: [
+                              TextSpan(
+                                  text: ' *',
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 18))
+                            ]),
+                      ),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(20)),
+                    Row(children: [
+                      Expanded(child: buildServicePriceMinFormField()),
+                      SizedBox(width: getProportionateScreenHeight(20)),
+                      Expanded(child: buildServicePriceMaxFormField()),
+                    ]),
+                    SizedBox(height: getProportionateScreenHeight(12)),
                     SizedBox(
                       width: double.infinity,
                       child: RichText(
@@ -288,6 +312,8 @@ class _BodyState extends State<Body> {
         "sub3": serviceSubCategories3,
         "sub4": serviceSubCategories4,
         "sub5": serviceSubCategories5,
+        "min_price": servicepriceMin,
+        "max_price": servicepriceMax,
         "cat_status": 'true',
         "cat_image": imageUrl,
       }); //sending post request with header data
@@ -371,6 +397,64 @@ class _BodyState extends State<Body> {
         labelStyle: const TextStyle(color: kPrimaryColor),
         focusColor: kPrimaryColor,
         hintText: "Service Name",
+        fillColor: kFormColor,
+        filled: true,
+      ),
+    );
+  }
+
+  TextFormField buildServicePriceMinFormField() {
+    return TextFormField(
+      cursorColor: kPrimaryColor,
+      keyboardType: TextInputType.number,
+      onSaved: (newValue) => servicepriceMin = newValue!,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Please fill";
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        labelStyle: const TextStyle(color: kPrimaryColor),
+        focusColor: kPrimaryColor,
+        hintText: "Min",
+        fillColor: kFormColor,
+        filled: true,
+      ),
+    );
+  }
+
+  TextFormField buildServicePriceMaxFormField() {
+    return TextFormField(
+      cursorColor: kPrimaryColor,
+      keyboardType: TextInputType.number,
+      onSaved: (newValue) => servicepriceMax = newValue!,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Please fill";
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(color: kPrimaryColor),
+        ),
+        labelStyle: const TextStyle(color: kPrimaryColor),
+        focusColor: kPrimaryColor,
+        hintText: "Max",
         fillColor: kFormColor,
         filled: true,
       ),

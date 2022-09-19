@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/components/delete_dialog.dart';
-import 'package:handyprovider/screens/home_screen/homescreen.dart';
+import 'package:handyprovider/screens/admin/add_services/add_services_sccreen.dart';
 
 import '../../../components/header_image.dart';
 import '../../../constants.dart';
@@ -266,7 +266,7 @@ class _BodyState extends State<Body> {
           success = true;
           print(data["msg"]);
           Navigator.of(context).pushNamedAndRemoveUntil(
-            HomeScreen.routeName,
+            AdminAddServicesScreen.routeName,
             (route) => false,
           );
         });

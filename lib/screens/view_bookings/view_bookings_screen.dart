@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 
-import '../../components/coustom_bottom_nav_bar.dart';
 import '../../constants.dart';
-import '../../enum.dart';
+
 import 'components/body.dart';
 
-class ViewOffersScreen extends StatelessWidget {
-  static String routeName = "/view_offers";
-  const ViewOffersScreen({Key? key}) : super(key: key);
+class ViewAllBookingsScreen extends StatefulWidget {
+  const ViewAllBookingsScreen({Key? key, required this.userid})
+      : super(key: key);
+  final String userid;
+  static String routeName = "/all_bookings";
 
+  @override
+  State<ViewAllBookingsScreen> createState() => _ViewAllBookingsScreenState();
+}
+
+class _ViewAllBookingsScreenState extends State<ViewAllBookingsScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           elevation: 2,
           centerTitle: false,
           title: const Text(
-            "Offers",
+            "Bookings",
             style: TextStyle(color: kTextColor),
           ),
           bottom: const TabBar(
@@ -26,14 +32,11 @@ class ViewOffersScreen extends StatelessWidget {
               unselectedLabelColor: kTextColorSecondary,
               indicatorColor: kPrimaryColor,
               tabs: [
-                Tab(text: 'New'),
                 Tab(text: 'Active'),
                 Tab(text: 'Completed'),
               ]),
         ),
-        body: const Body(),
-        bottomNavigationBar:
-            const CustomBottomNavBar(selectedMenu: MenuState.offers),
+        body: Body(id: widget.userid),
       ),
     );
   }

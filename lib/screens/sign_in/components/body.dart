@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/constants.dart';
 
-import '../../../components/no_account_txt.dart';
-
 import '../../../size_config.dart';
-import '../../sign_up/sign_up_screen.dart';
+
 import 'sign_form.dart';
 
 class Body extends StatelessWidget {
@@ -19,8 +17,8 @@ class Body extends StatelessWidget {
           padding:
               EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(0)),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Wrap(
+              //  crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Stack(
                   children: <Widget>[
@@ -37,7 +35,7 @@ class Body extends StatelessWidget {
                       child: const Padding(
                         padding: EdgeInsets.fromLTRB(8.0, 48, 8, 8),
                         child: Text(
-                          "LOGO",
+                          "ADMIN",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white, fontSize: 48),
                         ),
@@ -48,7 +46,7 @@ class Body extends StatelessWidget {
                           const EdgeInsets.fromLTRB(36.0, 150.0, 36.0, 36.0),
                       child: SizedBox(
                         width: double.infinity,
-                        height: SizeConfig.screenHeight * 0.46,
+                        // height: SizeConfig.screenHeight * 0.46,
                         child: Card(
                           color: kSecondaryColor,
                           shape: RoundedRectangleBorder(
@@ -94,14 +92,14 @@ class Body extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: getProportionateScreenHeight(102)),
-                NoAccountText(
-                    a: "Don’t have an account?",
-                    b: " Sign Up",
-                    press: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          SignUpScreen.routeName, (route) => false);
-                    }),
+                // SizedBox(height: getProportionateScreenHeight(102)),
+                // NoAccountText(
+                //     a: "Don’t have an account?",
+                //     b: " Sign Up",
+                //     press: () {
+                //       Navigator.of(context).pushNamedAndRemoveUntil(
+                //           SignUpScreen.routeName, (route) => false);
+                //     }),
               ],
             ),
           ),

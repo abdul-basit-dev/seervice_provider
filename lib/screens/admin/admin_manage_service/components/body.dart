@@ -9,7 +9,11 @@ import 'package:http/http.dart' as http;
 import '../../../../helper/global_config.dart';
 
 class Body extends StatefulWidget {
-  const Body({Key? key}) : super(key: key);
+  const Body({
+    Key? key,
+    required this.serviceName,
+  }) : super(key: key);
+  final String serviceName;
 
   @override
   State<Body> createState() => _BodyState();
@@ -34,10 +38,16 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     super.initState();
-    getAllCategories();
+    if (widget.serviceName != '') {
+      getSearchCategories();
+    } else {
+      getAllCategories();
+    }
+    print(widget.serviceName);
   }
 
   final String url = baseUrl + "admin_get_all_cat.php";
+  final String searchurl = baseUrl + "admin_get_search_service.php";
 
   late List data;
 
@@ -48,6 +58,24 @@ class _BodyState extends State<Body> {
       "Accept": "application/json"
     }, body: {
       "cat_status": 'true',
+    });
+
+    print(response.body);
+    setState(() {
+      var convertDataToJson = json.decode(response.body)['result'];
+      data = convertDataToJson;
+      isLoading = true;
+      print(data);
+    });
+  }
+
+  Future getSearchCategories() async {
+    print('\nAll Cat\n');
+    var response = await http.post(Uri.parse(searchurl), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "cat_status": 'true',
+      "cat_title": widget.serviceName,
     });
 
     print(response.body);
@@ -96,6 +124,8 @@ class _BodyState extends State<Body> {
                               id: data[index]['id'] ?? '',
                               image: data[index]['cat_image'] ?? '',
                               cat_status: data[index]['cat_status'] ?? '',
+                              servicepriceMin: data[index]['min_price'] ?? '',
+                              servicepriceMax: data[index]['max_price'] ?? '',
                             ),
                           ));
                     },

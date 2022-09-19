@@ -3,18 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:handyprovider/constants.dart';
 import 'package:handyprovider/screens/admin/admin_dashboard/admin_dashboard.dart';
-import 'package:handyprovider/screens/admin/manage_services/manage_services_screen.dart';
+
 import 'package:handyprovider/screens/sign_in/sign_in_screen.dart';
-import 'package:handyprovider/screens/sign_up/sign_up_screen.dart';
+
 import 'package:handyprovider/size_config.dart';
 
 // This is the best practice
 
 import '../../../helper/global_config.dart';
-import '../../home_screen/homescreen.dart';
+
 import '../components/splash_content.dart';
 import '../../../components/default_button.dart';
-import '../../../components/secondry_btn.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -32,19 +31,14 @@ class _BodyState extends State<Body> {
         Navigator.of(context).pushNamedAndRemoveUntil(
             AdminDashBoard.routeName, (route) => false);
       });
-    } else if (box!.containsKey("login")) {
-      Future.delayed(Duration.zero, () {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
-      });
     }
   }
 
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
-      "heading": "Find Best the Clients",
-      "text": "Find the best clients for your services in just few steps",
+      "heading": "Welcome Admin",
+      "text": "Find the best clients",
       "image": "assets/images/splash_1.png"
     },
     {
@@ -74,7 +68,7 @@ class _BodyState extends State<Body> {
                     currentPage = value;
                   });
                 },
-                itemCount: splashData.length,
+                itemCount: 1,
                 itemBuilder: (context, index) => SplashContent(
                   image: splashData[index]["image"]!,
                   text: splashData[index]['text']!,
@@ -92,7 +86,7 @@ class _BodyState extends State<Body> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        splashData.length,
+                        1,
                         (index) => buildDot(index: index),
                       ),
                     ),
@@ -108,16 +102,16 @@ class _BodyState extends State<Body> {
                       ),
                     ),
                     Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 0),
-                      child: SecondaryButton(
-                        text: "Create Account",
-                        press: () {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              SignUpScreen.routeName, (route) => false);
-                        },
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 0),
+                    //   child: SecondaryButton(
+                    //     text: "Create Account",
+                    //     press: () {
+                    //       Navigator.of(context).pushNamedAndRemoveUntil(
+                    //           SignUpScreen.routeName, (route) => false);
+                    //     },
+                    //   ),
+                    // ),
                     const Spacer(
                       flex: 4,
                     ),
