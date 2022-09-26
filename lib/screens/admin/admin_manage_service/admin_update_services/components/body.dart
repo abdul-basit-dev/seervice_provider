@@ -347,6 +347,8 @@ class _BodyState extends State<Body> {
         "sub3": sub3!.text,
         "sub4": sub4!.text,
         "sub5": sub5!.text,
+        "min_price": servicepriceMin!.text,
+        "max_price": servicepriceMax!.text,
         "cat_status": 'true',
         "cat_image": imageUrl == 'Empty' ? widget.image : imageUrl,
       }); //sending post request with header data
